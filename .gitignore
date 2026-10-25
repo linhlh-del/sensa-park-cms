@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.env.local
+.env.*.local
+
+# schema chép tạm khi chạy demo
+public/cms-schema.json

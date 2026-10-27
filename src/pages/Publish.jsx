@@ -3,6 +3,7 @@ import { useContent, diffKeys } from '@/lib/content';
 import { admin, supabase } from '@/lib/supabase';
 import { PROJECT } from '@/project';
 import { Badge, Button, Card, Empty, Field, PageHeader, fmtDate, useToast } from '@/components/ui';
+import SiteStatus from '@/components/SiteStatus';
 
 const STATE = { READY: ['Đã lên website', 'green'], BUILDING: ['Đang build', 'amber'], QUEUED: ['Đang chờ build', 'amber'], INITIALIZING: ['Đang khởi tạo', 'amber'], ERROR: ['Build lỗi', 'red'], CANCELED: ['Đã huỷ', 'stone'] };
 
@@ -76,7 +77,9 @@ export default function Publish() {
           </div>
         </Card>
 
-        <Card title="Trạng thái website" actions={<Button size="sm" variant="ghost" onClick={loadDeploy}>Làm mới</Button>}>
+        <div className="flex flex-col gap-6">
+        <SiteStatus published={row?.published} publishedAt={row?.published_at} />
+        <Card title="Build trên Vercel" actions={<Button size="sm" variant="ghost" onClick={loadDeploy}>Làm mới</Button>}>
           {!deploy ? <p className="text-sm text-stone-500">Đang kiểm tra…</p> : !deploy.configured ? (
             <p className="text-sm text-stone-500">Chưa cấu hình VERCEL_TOKEN cho Edge Function nên không xem được trạng thái build. Website vẫn build lại bình thường qua Deploy Hook.</p>
           ) : (
@@ -87,6 +90,7 @@ export default function Publish() {
             </div>
           )}
         </Card>
+        </div>
       </div>
 
       <Card title="Lịch sử phiên bản" className="mt-6">
@@ -95,7 +99,7 @@ export default function Publish() {
             {versions.map((v, i) => (
               <li key={v.id} className="flex flex-wrap items-center justify-between gap-3 py-3 text-sm">
                 <div>
-                  <p className="font-medium text-stone-800">#{v.id} {i === 0 && <Badge tone="green">Đang chạy</Badge>} {v.note && <span className="font-normal text-stone-600">— {v.note}</span>}</p>
+                  <p className="font-medium text-stone-800">#{v.id} {i === 0 && <Badge tone="green">Mới nhất</Badge>} {v.note && <span className="font-normal text-stone-600">— {v.note}</span>}</p>
                   <p className="text-xs text-stone-400">{fmtDate(v.created_at)} · {v.created_by}</p>
                 </div>
                 {i > 0 && <Button size="sm" variant="secondary" disabled={busy} onClick={() => rollback(v)}>Khôi phục</Button>}

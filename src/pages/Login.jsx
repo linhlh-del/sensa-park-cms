@@ -3,7 +3,7 @@ import { configured } from '@/lib/supabase';
 import { PROJECT } from '@/project';
 
 export default function Login() {
-  const { state, email, signIn, signOut } = useAuth();
+  const { state, email, accessError, signIn, signOut } = useAuth();
   return (
     <div className="grid min-h-screen place-items-center bg-stone-100 p-6" style={{ '--accent': PROJECT.accent }}>
       <div className="w-full max-w-sm rounded-2xl bg-white p-8 text-center shadow-sm">
@@ -16,7 +16,11 @@ export default function Login() {
           </p>
         )}
 
-        {state === 'denied' ? (
+        {state === 'error' ? (
+          <p role="alert" className="mt-6 rounded-lg bg-red-50 p-3 text-left text-sm text-red-700">
+            Không kiểm tra được quyền truy cập CMS: {accessError}
+          </p>
+        ) : state === 'denied' ? (
           <>
             <p className="mt-6 text-sm text-stone-600">
               Tài khoản <strong>{email}</strong> chưa được cấp quyền cho dự án này. Liên hệ owner để được thêm vào danh sách thành viên.
